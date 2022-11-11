@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 
 import MoviesList from "./components/MoviesList";
 import "./App.css";
@@ -9,16 +9,7 @@ function App() {
     const [error, setError] = useState(null);
     const [retry, setRetry] = useState(false);
 
-    useEffect(() => {
-        if (retry === true) {
-            var retryfunc = setInterval(fetchMovieHandler, 5000);
-        }
-        return () => {
-            clearInterval(retryfunc);
-        };
-    }, [retry]);
-
-    async function fetchMovieHandler() {
+    const fetchMovieHandler = useCallback(async () => {
         setIsLoading(true);
         setError(null);
         try {
@@ -42,7 +33,20 @@ function App() {
             setRetry(true);
         }
         setIsLoading(false);
-    }
+    }, []);
+
+    useEffect(() => {
+        fetchMovieHandler();
+    }, [fetchMovieHandler]);
+
+    useEffect(() => {
+        if (retry === true) {
+            var retryfunc = setInterval(fetchMovieHandler, 5000);
+        }
+        return () => {
+            clearInterval(retryfunc);
+        };
+    }, [retry, fetchMovieHandler]);
 
     const cancelRetryHandler = () => {
         setRetry(false);
