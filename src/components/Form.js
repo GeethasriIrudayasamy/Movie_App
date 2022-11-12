@@ -17,6 +17,7 @@ const Form = (props) => {
             openingText: movieDescription,
         };
         console.log(NewMovieObj);
+        props.onAddMovie(NewMovieObj);
     };
     return (
         <form onSubmit={addMovieHandler} className={classes.form}>
